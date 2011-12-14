@@ -7,7 +7,7 @@ import (
 	"image/png"
 	"os"
 	"rand"
-	"runtime"
+	//"runtime"
 )
 
 const (
@@ -53,34 +53,21 @@ var (
 	yratio float64 = 0
 )
 
-type error interface {
-	String() string
-}
-
 // used in generatePoints to send the point & the color in the same channel
 type complexPoint struct {
 	z     complex128
 	color uint64
 }
 
-// used in cpx2px if a point is outside of the plan
-type convertError struct {
-	s string
-}
-
-func (err convertError) String() string {
-	return err.s
-}
-
 // convert z to it's coordinate in pixel in
 // the output image
-func cpx2px(z complex128) (uint64, uint64, error) {
+func cpx2px(z complex128) (uint64, uint64, os.Error) {
 	re, im := real(z), imag(z)
 	x := uint64((re - *xmin) * xratio)
 	y := uint64((*ymax - im) * yratio)
 
 	if x < 0 || x >= *width || y < 0 || y >= *height {
-		return 0, 0, convertError{"Point outside of the image."}
+		return 0, 0, os.NewError("Point outside of the image.")
 	}
 
 	return x, y, nil
@@ -274,7 +261,7 @@ func renderBuddha() {
 
 func main() {
 	flag.Parse()
-	runtime.GOMAXPROCS(4) // should be set through $GOMAXPROCS ideally
+	//runtime.GOMAXPROCS(4) // should be set through $GOMAXPROCS ideally
 
 	if *help {
 		flag.PrintDefaults()
