@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	//"fmt"
 	"image"
 	"image/png"
 	"os"
@@ -31,11 +31,11 @@ var (
 		"The bottom part of the plan.")
 	ymax *float64 = flag.Float64("ymax", 1.5,
 		"The top part of the plan.")
-	riter *uint64 = flag.Uint64("r", 25000,
+	riter *uint64 = flag.Uint64("r", 250,
 		"Max number of iterations for the red channel.")
-	giter *uint64 = flag.Uint64("g", 10000,
+	giter *uint64 = flag.Uint64("g", 100,
 		"Max number of iterations for the green channel.")
-	biter *uint64 = flag.Uint64("b", 50000,
+	biter *uint64 = flag.Uint64("b", 500,
 		"Max number of iterations for the blue channel.")
 	goroutines *uint64 = flag.Uint64("goroutines", 8,
 		"Number of goroutines to use.")
@@ -140,6 +140,7 @@ func generatePoints(npoints uint64, ch chan complexPoint, quit chan bool) {
 			// it escaped
 			// use > 4, and not cmath.Abs because it's faster
 			re, im = real(z), imag(z)
+
 			if re*re+im*im > 4 {
 				// continue until we are outside of the plan
 				// because it's ugly otherwise (draw a circle)
@@ -208,11 +209,6 @@ func renderImage(red [][]uint64, green [][]uint64, blue [][]uint64) {
 	for y := 0; y < int(*height); y++ {
 		for x := 0; x < int(*width); x++ {
 			r, g, b := red[y][x], green[y][x], blue[y][x]
-			if x == 341 && y == 256 {
-				fmt.Println(minr, r, maxr)
-				fmt.Println(ming, g, maxg)
-				fmt.Println(minb, b, maxb)
-			}
 			var m float64 = 1<<16 - 1
 
 			im.SetNRGBA64(x, y, image.NRGBA64Color{
