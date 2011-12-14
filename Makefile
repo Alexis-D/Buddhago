@@ -1,10 +1,10 @@
+ARCH=6 #6g, 6l, 5g, 5l...
 SRC=buddha.go
-OBJ=buddha.6
 OUT=buddha
 
 all:
-	6g -o $(OBJ) $(SRC)
-	6l -o $(OUT) $(OBJ)
+	6g -o $(OUT).$(ARCH) $(SRC)
+	6l -o $(OUT) $(OUT).$(ARCH)
 
 run: all
 	./$(OUT)
@@ -13,7 +13,7 @@ fmt:
 	gofmt -w=true $(SRC)
 
 clean:
-	rm *.6
+	rm *.$(ARCH)
 
 mrpoprer: clean
 	rm $(OUT)
