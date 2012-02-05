@@ -3,8 +3,8 @@ SRC=buddha.go
 OUT=buddha
 
 all:
-	6g -o $(OUT).$(ARCH) $(SRC)
-	6l -o $(OUT) $(OUT).$(ARCH)
+	$(ARCH)g -o $(OUT).$(ARCH) $(SRC)
+	$(ARCH)l -o $(OUT) $(OUT).$(ARCH)
 
 run: all
 	./$(OUT)
