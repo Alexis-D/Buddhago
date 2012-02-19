@@ -8,6 +8,11 @@ A simple implementation of the _famous_ Buddhabrot (discovered by Melinda Green)
 
 To use Go & because Buddhabrots are awesome, aren't they?
 
+## Build & run?
+
+    $ go build buddha.go
+    $ ./buddha # see source for args
+
 ## Examples
 
 ![1](https://raw.github.com/Alexis-D/Buddhago/master/examples/1.png)

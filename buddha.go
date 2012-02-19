@@ -1,12 +1,15 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	//"fmt"
 	"image"
+	"image/color"
 	"image/png"
+	"math"
+	"math/rand"
 	"os"
-	"rand"
 	//"runtime"
 )
 
@@ -61,13 +64,13 @@ type complexPoint struct {
 
 // convert z to it's coordinate in pixel in
 // the output image
-func cpx2px(z complex128) (uint64, uint64, os.Error) {
+func cpx2px(z complex128) (uint64, uint64, error) {
 	re, im := real(z), imag(z)
 	x := uint64((re - *xmin) * xratio)
 	y := uint64((*ymax - im) * yratio)
 
 	if x < 0 || x >= *width || y < 0 || y >= *height {
-		return 0, 0, os.NewError("Point outside of the image.")
+		return 0, 0, errors.New("Point outside of the image.")
 	}
 
 	return x, y, nil
@@ -161,7 +164,7 @@ func generatePoints(npoints uint64, ch chan complexPoint, quit chan bool) {
 // Combine the three color channel and write them
 // to the out file
 func renderImage(red [][]uint64, green [][]uint64, blue [][]uint64) {
-	im := image.NewNRGBA64(int(*width), int(*height))
+	im := image.NewNRGBA64(image.Rect(0, 0, int(*width), int(*height)))
 
 	var (
 		minr             uint64 = 1<<64 - 1
@@ -198,10 +201,10 @@ func renderImage(red [][]uint64, green [][]uint64, blue [][]uint64) {
 			r, g, b := red[y][x], green[y][x], blue[y][x]
 			var m float64 = 1<<16 - 1
 
-			im.SetNRGBA64(x, y, image.NRGBA64Color{
-				uint16(m * float64(r) / float64(maxr-minr)),
-				uint16(m * float64(g) / float64(maxg-ming)),
-				uint16(m * float64(b) / float64(maxb-minb)),
+			im.SetNRGBA64(x, y, color.NRGBA64{
+				uint16(m * math.Sqrt(float64(r)/float64(maxr-minr))),
+				uint16(m * math.Sqrt(float64(g)/float64(maxg-ming))),
+				uint16(m * math.Sqrt(float64(b)/float64(maxb-minb))),
 				1<<16 - 1})
 		}
 	}
